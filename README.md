@@ -70,8 +70,10 @@ Each README follows the same fixed structure, so any tool in this repo can be sk
 | [n8n](n8n/README.md) | AI / automation — workflow builder | Self-hosted, visual automation and AI-agent pipelines | A scheduled price-monitoring alert pipeline |
 | [visual-studio-community](visual-studio-community/README.md) | Core dev tool — IDE / debugging | Full-featured, free IDE with a serious debugger | Finding and fixing a real bug in a REST API with the debugger |
 | [browser-devtools](browser-devtools/README.md) | Core dev tool — frontend debugging | Inspecting and debugging a page's live runtime behavior | Diagnosing duplicate network requests and a memory leak |
+| [supabase](supabase/README.md) | Open source / AI-ready backend | Postgres + Auth + Realtime as a hosted or self-hostable backend | A multi-user app secured by Row Level Security, synced live |
+| [telegram](telegram/README.md) | Core dev tool — bots / messaging | Free, instant chat-based bot interface | A real personal expense-tracking bot with per-user data |
 
-Five tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
+Seven tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
 
 ## Where this is headed
 

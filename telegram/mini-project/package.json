@@ -1,0 +1,15 @@
+{
+  "name": "telegram-expense-bot",
+  "version": "1.0.0",
+  "description": "A real Telegram bot that tracks personal expenses via chat commands",
+  "type": "module",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.66.0",
+    "better-sqlite3": "^11.3.0",
+    "dotenv": "^16.4.5"
+  }
+}
