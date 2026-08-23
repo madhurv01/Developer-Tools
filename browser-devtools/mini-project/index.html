@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Search (buggy build)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; }
+    input { width: 100%; padding: 8px; font-size: 16px; box-sizing: border-box; }
+    ul { list-style: none; padding: 0; }
+    li { border: 1px solid #ddd; border-radius: 6px; padding: 10px; margin-top: 8px; }
+    #clock { font-variant-numeric: tabular-nums; color: #555; margin-top: 12px; }
+    .hint { background: #fff8db; border: 1px solid #f0e0a0; padding: 10px; border-radius: 6px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>Product Search</h1>
+  <p class="hint">This build has two real bugs on purpose. Diagnose them with DevTools per the README — don't just read the source.</p>
+
+  <input id="search" type="text" placeholder="Type to search products (e.g. 'a')" />
+  <div id="clock">Live clock: --:--:--</div>
+  <ul id="results"></ul>
+
+  <script src="app.js"></script>
+</body>
+</html>
