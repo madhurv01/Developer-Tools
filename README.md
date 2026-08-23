@@ -5,7 +5,6 @@
     width="100%"
   />
 
-
 # Developer Tools — Resource Library
 
 A growing, hands-on library of guides to the tools developers actually reach for day to day — AI tools, core dev tools, and open-source software — each one covered deeply enough to genuinely master, not just install and forget.

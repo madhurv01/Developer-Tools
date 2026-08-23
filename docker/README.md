@@ -22,27 +22,34 @@ Nearly every serious open-source AI project — Ollama, Qdrant, Weaviate, Chroma
 ## Install
 
 ### Windows
+
 1. Install Docker Desktop: https://www.docker.com/products/docker-desktop
 2. Docker Desktop on Windows requires **WSL2** (Windows Subsystem for Linux) as its backend — the installer will prompt you to enable it and install a Linux kernel update if it's missing. Reboot when asked.
 3. Launch Docker Desktop and wait for the whale icon in the system tray to show "Docker is running."
 
 ### macOS
+
 Same installer link, native support for both Intel and Apple Silicon.
 
 ### Linux
+
 Install the Docker Engine directly (no Docker Desktop needed):
+
 ```bash
 curl -fsSL https://get.docker.com | sh
 sudo usermod -aG docker $USER   # so you don't need sudo for every docker command
 ```
+
 Log out and back in for the group change to apply.
 
 ### Verify install
+
 ```powershell
 docker --version
 docker compose version
 docker run hello-world
 ```
+
 The last command downloads a tiny test image and runs it — if you see "Hello from Docker!", your install is fully working end to end (daemon running, network access, image pull, container run).
 
 ## Key concepts you need before going further
@@ -55,6 +62,7 @@ The last command downloads a tiny test image and runs it — if you see "Hello f
 - **Network**: Compose automatically creates a private virtual network so your containers can reach each other by service name (e.g. a container named `api` can reach `redis` just by using the hostname `redis`).
 
 ## Core use cases
+
 - Guaranteeing a consistent dev environment across every machine on a team.
 - Packaging an app once and deploying that exact artifact anywhere (AWS, Azure, a bare-metal server, your laptop).
 - Running dependencies you don't want to install natively (databases, caches, message queues, AI model servers).
@@ -68,39 +76,50 @@ This is a genuinely common real-world shape: a stateless API container talking t
 **What the mini project does:** a small Node API ([mini-project/server.js](mini-project/server.js)) that increments a visit counter stored in Redis every time you hit `/`, and reports stats from `/stats`. The API and Redis run as **two separate containers**, wired together by [mini-project/docker-compose.yml](mini-project/docker-compose.yml).
 
 ### Step 1 — Build and start both containers
+
 ```powershell
 cd mini-project
 docker compose up --build
 ```
+
 Watch the logs: you'll see the `redis` container start first, then the `api` container connect to it at `redis://redis:6379` — note that's the **service name**, not `localhost` or an IP. Compose's built-in DNS is what makes `redis` resolve to the right container automatically.
 
 ### Step 2 — Generate some traffic
+
 In another terminal:
+
 ```powershell
 curl http://localhost:4000/
 curl http://localhost:4000/
 curl http://localhost:4000/stats
 ```
+
 `/stats` will show a growing `totalVisits` count, all being read from Redis, not from the API container's own memory.
 
 ### Step 3 — Prove persistence survives a restart
+
 ```powershell
 docker compose down
 docker compose up
 curl http://localhost:4000/stats
 ```
+
 The visit count is **still there** after a full container teardown and restart. This is because `docker-compose.yml` mounts a named volume (`redis_data`) to Redis's data directory — the data lives outside the container's own filesystem, so destroying and recreating the container doesn't touch it.
 
 ### Step 4 — Prove isolation by breaking only one container
+
 ```powershell
 docker compose restart redis
 ```
+
 The `api` container keeps running the whole time (check `docker compose ps`) and simply reconnects once Redis comes back — the two processes are genuinely independent, exactly as they would be in production.
 
 ### Step 5 — Clean up (including the volume, if you want a true fresh start)
+
 ```powershell
 docker compose down -v
 ```
+
 The `-v` flag deletes the named volume too — without it, `docker compose down` alone leaves the volume (and your data) intact for next time, which is the safer default.
 
 ## Reading the Dockerfile
@@ -114,6 +133,7 @@ The `-v` flag deletes the named volume too — without it, `docker compose down`
 - **Editing code but not seeing changes**: this Dockerfile `COPY`s source at build time, so you must `docker compose up --build` (not just `up`) after changing `server.js`.
 
 ## Resources
+
 - Docker docs: https://docs.docker.com
 - Dockerfile reference: https://docs.docker.com/reference/dockerfile/
 - Compose file reference: https://docs.docker.com/compose/compose-file/

@@ -11,6 +11,7 @@ n8n ("nodemation") is an open-source workflow automation platform — think of i
 ## Why this tool exists / the problem it solves
 
 Most real automation needs — "when X happens, do Y, unless Z, then notify someone" — historically meant writing and hosting a small backend service just to glue two APIs together, or paying for a SaaS automation tool (Zapier) that gets expensive fast at volume and requires sending your data through a third party's servers. n8n gives you the visual, no-backend-required workflow builder of Zapier, but:
+
 - **Self-hosted**: your data and API keys never leave your own infrastructure.
 - **Open source**: free to run at any scale, fully inspectable.
 - **Code-when-you-need-it**: drop into a JavaScript/Python "Code" node for logic that's awkward to express visually, instead of being boxed in by the no-code paradigm.
@@ -29,6 +30,7 @@ docker compose up
 ```
 
 Alternative — npm, no Docker (slower first run, installs a lot of dependencies):
+
 ```powershell
 npx n8n
 ```
@@ -42,6 +44,7 @@ Either way, open **http://localhost:5678**. On first visit you'll be asked to cr
 - **Timezone**: workflows using Schedule Trigger run in the timezone n8n is configured with (default UTC). Set `GENERIC_TIMEZONE` and `TZ` environment variables in `docker-compose.yml` if you need local-time scheduling.
 
 ## Core use cases
+
 - Scheduled monitoring/alerting (price checks, uptime checks, report generation).
 - Connecting SaaS tools together (new Typeform submission → row in Airtable → Slack message).
 - AI-powered pipelines (classify incoming data with an LLM, then branch on the result).
@@ -57,38 +60,48 @@ This is a realistic shape for a huge category of automations: **poll something o
 3. If true, sends a POST request to an "alert" endpoint — in a real deployment this would be a Slack incoming webhook URL; here it's a local Node server ([mini-project/alert-server.js](mini-project/alert-server.js)) that logs the alert, so you can see the entire pipeline fire end-to-end with zero external accounts needed.
 
 ### Step 1 — Start the alert receiver
+
 ```powershell
 node mini-project/alert-server.js
 ```
+
 This simulates the Slack/Discord webhook n8n would normally call.
 
 ### Step 2 — Start n8n
+
 ```powershell
 cd mini-project
 docker compose up
 ```
+
 Open http://localhost:5678 and complete the first-run setup.
 
 ### Step 3 — Import the workflow
+
 Click **Add workflow** → menu (⋯) → **Import from File** → select `price-monitor-workflow.json`.
 
 Note the "Send Alert" node's URL: `http://host.docker.internal:5001/alert`. Since n8n runs *inside a Docker container*, it can't reach your host machine via `localhost` — `host.docker.internal` is Docker's special DNS name for "the machine running Docker," which is exactly why this matters as a real-world Docker networking detail, not just an n8n quirk. (On Linux you may need `--add-host=host.docker.internal:host-gateway` in the compose file instead — see Docker's docs if `host.docker.internal` doesn't resolve.)
 
 ### Step 4 — Set a threshold you'll actually see fire
+
 Open the "Price Above Threshold?" node and change the comparison value from `1` to something close to BTC's real current price (so it triggers immediately for testing) — e.g. if BTC is around $60,000, set the threshold to `50000`.
 
 ### Step 5 — Activate and watch it run
+
 Click **Execute workflow** to run it once immediately, or toggle **Active** (top right) to let the Schedule Trigger run it automatically every minute. Watch the `alert-server.js` terminal — you should see `=== ALERT RECEIVED ===` with the live BTC price whenever the condition is met.
 
 ### Step 6 — Inspect a real execution
+
 Click on any node after a run to see its actual input/output data — this is how you debug why a workflow branched the way it did, exactly like inspecting variables in a code debugger.
 
 ## Common pitfalls
+
 - **`host.docker.internal` not resolving on Linux**: add `extra_hosts: ["host.docker.internal:host-gateway"]` under the `n8n` service in `docker-compose.yml`.
 - **Workflow not firing**: a workflow must be toggled **Active** for its Schedule Trigger to run in the background — "Execute workflow" alone only runs it once, manually.
 - **Rate limits**: CoinGecko's free public API has a rate limit; if you set the schedule to run every few seconds instead of every minute during testing, you may start getting errors.
 
 ## Resources
+
 - Docs: https://docs.n8n.io
 - Workflow templates library: https://n8n.io/workflows/
 - AI nodes docs: https://docs.n8n.io/advanced-ai/

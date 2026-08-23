@@ -16,17 +16,21 @@ A web page is the product of HTML, CSS, and JavaScript all interacting live in t
 AI-generated frontend code often *looks* correct and runs without throwing errors, while still having exactly the class of bug DevTools is built to catch: redundant network calls, memory leaks from uncleared timers/listeners, layout bugs from conflicting CSS. These bugs won't show up in a type-checker or a quick glance at the code — you have to actually run the page and watch it. DevTools is how you verify AI-written frontend code is actually correct, not just plausible-looking.
 
 ## Install
+
 No install needed — it's built into every modern browser.
+
 - Open with **F12** or **Ctrl+Shift+I** (Windows/Linux), **Cmd+Option+I** (Mac), or right-click any page → **Inspect**.
 - To open directly to a specific panel: **Ctrl+Shift+J** (Chrome/Edge) jumps straight to the Console.
 
 ## Configure (worth knowing, not required)
+
 - **Dock position**: the ⋮ menu in DevTools lets you dock it to the bottom, left, right, or pop it into its own window — undocking to a second monitor is genuinely useful for serious debugging sessions.
 - **Preserve log** (Network/Console tabs): check this box to keep request/log history across page navigations — off by default, so logs vanish on reload unless you enable it. Critical when debugging something that happens *during* a page load or redirect.
 - **Disable cache** (Network tab, while DevTools is open): forces every request to hit the network fresh instead of being served from cache — important when you're not sure if you're looking at stale cached data.
 - **Throttling** (Network tab): simulate slow 3G/4G connections to see how your app behaves for real users on poor connections, not just your fast dev machine.
 
 ## Core use cases
+
 - **Elements**: live-edit HTML/CSS to prototype UI changes instantly, inspect computed styles and exactly which CSS rule is winning.
 - **Console**: run JS on the fly, view `console.log`/error output, inspect thrown exceptions with full stack traces.
 - **Sources**: set breakpoints and step through JavaScript execution line by line, inspect variables in scope at any pause point.
@@ -41,6 +45,7 @@ These are two of the most common real-world frontend bugs — the kind that ship
 **What the mini project is:** a small product-search page ([mini-project/index.html](mini-project/index.html), [mini-project/app.js](mini-project/app.js)) with two real, intentional bugs left in.
 
 ### Setup
+
 Open `mini-project/index.html` directly in your browser, then open DevTools (**F12**).
 
 ### Bug 1 — diagnose redundant network requests
@@ -64,16 +69,19 @@ Open `mini-project/index.html` directly in your browser, then open DevTools (**F
 5. The real-world fix (again, worth understanding even if not required here): store the interval ID returned by `setInterval` and call `clearInterval` on it before starting a new one — the standard "clean up before you re-initialize" pattern that AI-generated code frequently forgets to include.
 
 ### Step-through bonus: use the Sources panel
+
 1. Open the **Sources** tab, find `app.js` in the file tree on the left.
 2. Click the line number next to `const names = await fetchProducts(query);` inside the input handler to set a breakpoint.
 3. Type a character in the search box — execution pauses. Open the **Scope** panel to inspect the live value of `query` and `e.target.value` at that exact moment, and use the **Call Stack** panel to see exactly what triggered this code (the `input` event listener).
 
 ## Common pitfalls
+
 - **Console/Network history disappearing on reload**: enable **Preserve log** if you need to see what happened right up to and during a navigation.
 - **Seeing cached responses and thinking a bug is fixed when it isn't**: enable **Disable cache** while DevTools is open during active debugging.
 - **Debugging minified production code**: use the "pretty print" `{}` button in the Sources panel to reformat minified JS into something readable before setting breakpoints in it.
 
 ## Resources
+
 - Chrome DevTools docs: https://developer.chrome.com/docs/devtools/
 - Network panel deep dive: https://developer.chrome.com/docs/devtools/network/
 - Memory panel / finding leaks: https://developer.chrome.com/docs/devtools/memory-problems/

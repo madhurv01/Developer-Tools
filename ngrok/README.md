@@ -27,21 +27,25 @@ AI agents and bots are almost always webhook- or event-driven — a Slack bot re
 ## Install
 
 ### Windows — via winget (recommended)
+
 ```powershell
 winget install ngrok.ngrok
 ```
 
 ### Windows — manual
+
 1. Download the Windows zip from https://ngrok.com/download
 2. Extract `ngrok.exe` to a folder, e.g. `C:\tools\ngrok\`
 3. Add that folder to your PATH (System Properties → Environment Variables → Path → New), or just always `cd` into it before running.
 
 ### macOS
+
 ```bash
 brew install ngrok/ngrok/ngrok
 ```
 
 ### Linux (Debian/Ubuntu)
+
 ```bash
 curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
   | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
@@ -51,6 +55,7 @@ sudo apt update && sudo apt install ngrok
 ```
 
 ### Verify
+
 ```powershell
 ngrok version
 ```
@@ -90,23 +95,30 @@ This is the actual workflow used when building GitHub Apps, CI bots, or "auto-de
 - Rejects and logs any request with a missing/invalid signature
 
 ### Step 1 — Run the receiver
+
 ```powershell
 cd mini-project
 node webhook-server.js
 ```
+
 You'll see it listening on port 3000 with the shared secret it's using (`my-local-dev-secret` by default — override with the `WEBHOOK_SECRET` env var).
 
 ### Step 2 — Test signature verification locally, no GitHub needed
+
 In a second terminal:
+
 ```powershell
 node mini-project/simulate-github-push.js
 ```
+
 This sends a correctly-signed fake `push` payload. Check the first terminal — you should see `Verified GitHub event: push` and a line written to `mini-project/deploy.log`. Now edit `simulate-github-push.js` to send a wrong secret and re-run it — you'll see the server reject it with a 401, exactly what happens when someone tries to spoof a webhook.
 
 ### Step 3 — Expose it and wire up a real GitHub repo (optional but recommended)
+
 ```powershell
 ngrok http 3000
 ```
+
 Copy the `https://...ngrok-free.app` URL ngrok prints.
 
 In any GitHub repo you own: **Settings → Webhooks → Add webhook**
@@ -118,6 +130,7 @@ In any GitHub repo you own: **Settings → Webhooks → Add webhook**
 Save it — GitHub immediately sends a `ping` event, which you'll see logged in your terminal and in `deploy.log`. Now push a real commit to that repo and watch your local server react to a live GitHub event in real time.
 
 ### Step 4 — Inspect the raw traffic
+
 Open http://127.0.0.1:4040 while ngrok is running — this is ngrok's local web inspector. You can see the exact headers and body GitHub sent, and even **replay** a request without needing GitHub to send it again — extremely useful once you're debugging a real payload shape issue.
 
 ## Common pitfalls
@@ -127,6 +140,7 @@ Open http://127.0.0.1:4040 while ngrok is running — this is ngrok's local web 
 - **Testing against the wrong port**: if your app also runs a frontend dev server, make sure you're tunneling the port your webhook receiver is actually on.
 
 ## Resources
+
 - Docs: https://ngrok.com/docs
 - Webhook debugging guide: https://ngrok.com/docs/guides/webhooks/
 - GitHub's webhook signature verification docs: https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries
