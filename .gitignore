@@ -7,3 +7,6 @@ node_modules/
 bin/
 obj/
 .vs/
+database.types.ts
+supabase/.temp/
+supabase/.branches/

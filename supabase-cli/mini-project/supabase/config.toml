@@ -1,0 +1,25 @@
+# Generated (and re-generated) by `supabase init` / `supabase start`.
+# This file defines the entire local stack's configuration - ports, which
+# services are enabled, auth settings - checked into git so every developer
+# on a team gets byte-for-byte the same local environment.
+
+project_id = "supabase-cli-mini-project"
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+
+[functions]
+enabled = true
