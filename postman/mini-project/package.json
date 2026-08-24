@@ -1,0 +1,17 @@
+{
+  "name": "postman-orders-api",
+  "version": "1.0.0",
+  "description": "A token-authenticated API, tested end-to-end with a Postman collection",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test:newman": "newman run Orders-API.postman_collection.json -e Orders-API.postman_environment.json"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "newman": "^6.2.1"
+  }
+}

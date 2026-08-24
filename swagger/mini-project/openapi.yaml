@@ -1,0 +1,109 @@
+# The OpenAPI spec IS the contract - in this project it's not just
+# documentation, it's actively loaded at runtime (see server.js) and used to
+# reject any request or response that doesn't match it. This is the real
+# industry pattern: "contract-first" API design, where the spec is the
+# single source of truth that both the docs and the enforcement are
+# generated from.
+openapi: 3.0.3
+info:
+  title: Bookstore API
+  version: 1.0.0
+  description: >
+    A small inventory API for a bookstore. Demonstrates schema-validated
+    request/response bodies, defined with OpenAPI 3.0.
+servers:
+  - url: http://localhost:4001
+
+paths:
+  /books:
+    get:
+      summary: List all books
+      operationId: listBooks
+      responses:
+        "200":
+          description: A list of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+    post:
+      summary: Add a new book
+      operationId: createBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewBook"
+      responses:
+        "201":
+          description: The created book
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "400":
+          description: Validation error - request body didn't match the schema
+
+  /books/{id}:
+    get:
+      summary: Get a single book by id
+      operationId: getBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The requested book
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "404":
+          description: Book not found
+    delete:
+      summary: Remove a book
+      operationId: deleteBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted successfully
+        "404":
+          description: Book not found
+
+components:
+  schemas:
+    NewBook:
+      type: object
+      required: [title, author, price]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        author:
+          type: string
+          minLength: 1
+        price:
+          type: number
+          minimum: 0
+        inStock:
+          type: boolean
+          default: true
+    Book:
+      allOf:
+        - $ref: "#/components/schemas/NewBook"
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: integer
