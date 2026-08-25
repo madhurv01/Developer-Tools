@@ -10,3 +10,9 @@ obj/
 database.types.ts
 supabase/.temp/
 supabase/.branches/
+.vercel/
+__pycache__/
+*.pyc
+.venv/
+venv/
+.streamlit/secrets.toml

@@ -76,8 +76,11 @@ Each README follows the same fixed structure, so any tool in this repo can be sk
 | [postman](postman/README.md) | Core dev tool — API testing | Manual and automated HTTP API testing | A CI-runnable auth test suite with positive and negative tests |
 | [supabase-cli](supabase-cli/README.md) | Core dev tool — local backend dev | Running the full Supabase stack locally, migrations as code | A local migration → seed → typed → Edge Function workflow |
 | [groq](groq/README.md) | AI tool — low-latency inference | Ultra-fast LLM inference (LPU hardware) for real-time AI features | Real-time ticket triage + a live streaming latency benchmark |
+| [vercel](vercel/README.md) | Core dev tool — deployment (serverless) | Deploying frontends + serverless functions, zero server management | A waitlist app with a real serverless API, deployed to a live URL |
+| [render](render/README.md) | Core dev tool — deployment (persistent) | Deploying always-on web services, workers, and cron jobs | A persistent counter service + a scheduled job, deployed as one Blueprint |
+| [streamlit](streamlit/README.md) | Open source — Python data apps | Turning a Python script into an interactive web app | A filterable sales dashboard, deployed live to Streamlit Community Cloud |
 
-Eleven tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
+Fourteen tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
 
 ## Where this is headed
 

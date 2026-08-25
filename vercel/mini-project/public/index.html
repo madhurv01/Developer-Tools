@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Waitlist</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 480px; margin: 60px auto; padding: 0 16px; }
+    input { width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; }
+    button { padding: 10px 16px; cursor: pointer; }
+    #status { margin-top: 14px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>Join the waitlist</h1>
+  <p>This form posts to a real serverless function at <code>/api/subscribe</code> - no backend server, no server to manage, deployed as part of this same project.</p>
+
+  <form id="form">
+    <input id="email" type="email" placeholder="you@example.com" required />
+    <button type="submit">Join waitlist</button>
+  </form>
+  <div id="status"></div>
+
+  <script>
+    const form = document.getElementById("form");
+    const status = document.getElementById("status");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      status.textContent = "Submitting...";
+      const email = document.getElementById("email").value;
+
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      status.textContent = res.ok
+        ? `Success: ${data.message}`
+        : `Error: ${data.message}`;
+    });
+  </script>
+</body>
+</html>

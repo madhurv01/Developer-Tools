@@ -1,0 +1,13 @@
+{
+  "name": "render-web-plus-cron",
+  "version": "1.0.0",
+  "description": "A persistent web service and a scheduled cron job, deployed together as a Render Blueprint",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "cron": "node worker.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

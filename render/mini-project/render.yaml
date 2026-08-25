@@ -1,0 +1,29 @@
+# A Render "Blueprint" - Infrastructure as Code for Render. This ONE file,
+# checked into git, defines BOTH services below. Deploying it (see README)
+# creates and configures both at once, in one reviewable, version-controlled
+# place - no manually clicking through a dashboard twice for two related
+# services, and no drift between what's deployed and what's documented.
+
+services:
+  # A persistent, always-running web service (contrast with the Vercel
+  # mini project's stateless serverless functions elsewhere in this repo).
+  - type: web
+    name: visit-counter-web
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  # A scheduled job, run on its own independent schedule, in its own
+  # container - unrelated to and unaffected by the web service's uptime.
+  - type: cron
+    name: daily-report-job
+    runtime: node
+    plan: free
+    schedule: "0 6 * * *"
+    buildCommand: npm install
+    startCommand: npm run cron
