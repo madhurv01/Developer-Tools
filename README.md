@@ -75,8 +75,9 @@ Each README follows the same fixed structure, so any tool in this repo can be sk
 | [swagger](swagger/README.md) | Core dev tool — API docs / contract | Documenting and enforcing a REST API's contract | A contract-first API that rejects any request violating its own spec |
 | [postman](postman/README.md) | Core dev tool — API testing | Manual and automated HTTP API testing | A CI-runnable auth test suite with positive and negative tests |
 | [supabase-cli](supabase-cli/README.md) | Core dev tool — local backend dev | Running the full Supabase stack locally, migrations as code | A local migration → seed → typed → Edge Function workflow |
+| [groq](groq/README.md) | AI tool — low-latency inference | Ultra-fast LLM inference (LPU hardware) for real-time AI features | Real-time ticket triage + a live streaming latency benchmark |
 
-Ten tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
+Eleven tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
 
 ## Where this is headed
 
