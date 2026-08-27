@@ -4,6 +4,8 @@ node_modules/
 .env.*
 !.env.example
 *.db
+*.db-wal
+*.db-shm
 bin/
 obj/
 .vs/

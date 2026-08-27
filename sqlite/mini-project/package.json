@@ -1,0 +1,16 @@
+{
+  "name": "sqlite-notes-cli",
+  "version": "1.0.0",
+  "description": "A local-first notes CLI demonstrating SQLite's real differentiators: FTS5 full-text search, WAL mode, and transaction batching",
+  "type": "module",
+  "bin": {
+    "notes": "./notes-cli.js"
+  },
+  "scripts": {
+    "notes": "node notes-cli.js",
+    "benchmark": "node transaction-benchmark.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0"
+  }
+}
