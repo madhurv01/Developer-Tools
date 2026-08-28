@@ -12,62 +12,61 @@
 
 Before OpenAPI became standard, API documentation was almost always a Word doc, a wiki page, or a hand-written Markdown file — written once, then drifting out of sync with the real API within weeks, because nothing forced it to stay accurate. A consumer of the API had no reliable way to know if the docs were still true, and had to resort to reading source code or trial-and-error against the live endpoint.
 
-OpenAPI fixes this by making the spec a **single, machine-readable source of truth** that tooling can act on directly: generate interactive docs from it (Swagger UI), generate client SDKs in any language from it (OpenAPI Generator), and — the pattern this mini project demonstrates — **enforce it at runtime**, so a request that violates the contract is rejected automatically instead of the spec silently becoming a lie. This last part, "contract-first" API design, is the actual industry-standard practice at any team serious about API reliability: the spec isn't generated *after* the code as an afterthought — it's written first (or kept in lockstep with the code) and used to validate real traffic against it.
+There are two real, widely-used ways teams solve this today:
+
+1. **Spec-first**: hand-write an `openapi.yaml` describing the contract, then validate real requests/responses against it at runtime (common in Node/Express stacks, using libraries like `express-openapi-validator`).
+2. **Code-first**: write the API in a framework that *generates* the OpenAPI spec directly from your code's type definitions — this mini project's approach, using Python's FastAPI. The spec and the interactive docs are a byproduct of the same Pydantic models that validate every request, so they cannot drift apart from what the code actually does, by construction.
+
+Both are genuinely "contract-first" in spirit — the difference is which artifact is the source of truth (a written spec file, or the code's own type definitions). Understanding both matters because you'll encounter each in real codebases depending on the language and team.
 
 ## Why it matters in the AI era
 
-An OpenAPI spec is one of the most useful things you can hand an AI tool: it's precise, structured, and unambiguous in a way prose documentation isn't, which makes it the ideal input for AI-generated API clients, AI agents that need to call your API correctly (LLM "function calling" and tool definitions are structurally very similar to an OpenAPI operation), and AI-assisted code review that can check whether an implementation actually matches its documented contract. Teams building AI agents that call internal APIs increasingly generate the agent's tool definitions directly from an existing OpenAPI spec, rather than hand-writing them — which only works if that spec is trustworthy, i.e. actually enforced against real traffic the way this mini project sets up.
+An OpenAPI spec is one of the most useful things you can hand an AI tool: it's precise, structured, and unambiguous in a way prose documentation isn't, which makes it the ideal input for AI-generated API clients, AI agents that need to call your API correctly (LLM "function calling" and tool definitions are structurally very similar to an OpenAPI operation), and AI-assisted code review that can check whether an implementation actually matches its documented contract. FastAPI's code-first approach is particularly convenient here — since the spec is generated automatically, an AI agent's tool definitions can be regenerated straight from a running API with zero manual spec-writing, and can never silently go stale the way a hand-maintained spec can.
 
 ## Install
 
-There's nothing to install to *use* the OpenAPI spec format itself — it's just YAML/JSON. What you install is the tooling that acts on a spec you write.
-
-For this mini project (a Node/Express API with the spec enforced at runtime):
-
 ```powershell
 cd mini-project
-npm install
+pip install -r requirements.txt
 ```
 
-For exploring/editing specs visually without writing code: **Swagger Editor**, a live browser-based editor with real-time validation — https://editor.swagger.io (no install, works entirely in-browser) or self-hosted via Docker:
+This installs FastAPI (the web framework, which generates the OpenAPI spec and Swagger UI automatically) and Uvicorn (the ASGI server that actually runs it).
 
-```powershell
-docker run -p 8080:8080 swaggerapi/swagger-editor
-```
+For exploring/editing a hand-written spec visually (the spec-first approach): **Swagger Editor**, a live browser-based editor with real-time validation — https://editor.swagger.io (no install, works entirely in-browser).
 
 ## Configure
 
-- **Spec location and versioning**: keep `openapi.yaml` in the same repo as the API it describes, and treat changes to it with the same review rigor as code — it's a contract other teams/consumers depend on.
-- **`operationId`**: every operation in this project's spec has one (e.g. `listBooks`) — many codegen and tooling workflows use this as the generated function name, so keeping it descriptive and stable matters once other tools depend on it.
-- **`validateResponses`** (used in this project's `server.js`): a stricter setting most real projects only enable in development/CI, not production — it catches the API's *own* bugs (returning something that violates its documented shape) but adds validation overhead you may not want on every production request.
+- **Automatic spec generation**: unlike a hand-written `openapi.yaml`, this project has no spec file at all — FastAPI builds it from the `NewBook`/`Book` Pydantic models and route type hints in `main.py`, and serves the raw generated spec at `/openapi.json` if you ever need the file itself (e.g. to feed into a codegen tool).
+- **`response_model`**: sets the *response* shape FastAPI documents and validates against — separate from the request body model, exactly the same way this project's Node-based sibling projects separate `NewBook` (input) from `Book` (output, with an `id`).
+- **Interactive docs paths**: FastAPI serves Swagger UI at `/docs` and an alternative UI (ReDoc) at `/redoc` automatically, with zero configuration — both read the same generated spec.
 
 ## Core use cases
 
 - Interactive, always-accurate API documentation for consumers (internal teams, external partners, the public).
-- Contract-first development: write the spec first, generate a server stub and client SDKs from it, then implement against the stub.
-- Request/response validation middleware, rejecting malformed traffic before it reaches business logic.
+- Contract-first development, whether spec-first (hand-written YAML + a validator) or code-first (a framework like FastAPI generating the spec from your code).
+- Request/response validation, rejecting malformed traffic before it reaches business logic.
 - Generating typed API clients automatically (OpenAPI Generator, openapi-typescript) instead of hand-writing fetch calls.
 - Powering API gateways and mocking servers directly from the same spec used for docs.
 
-## Real-life scenario: a contract-first, self-enforcing API
+## Real-life scenario: a code-first, self-documenting API
 
-This is the actual industry-standard pattern, not a toy: the OpenAPI spec is loaded by the server itself and used to validate every request and response, so the documentation and the real behavior of the API structurally cannot drift apart.
+This demonstrates the code-first alternative to hand-writing a spec: the OpenAPI contract and the interactive docs are generated directly from the same Pydantic models that validate every request, so the documentation and the real behavior of the API structurally cannot drift apart.
 
-**What the mini project does:** [mini-project/openapi.yaml](mini-project/openapi.yaml) defines a small "Bookstore" API (list, get, create, delete books) with strict schemas — required fields, types, minimum values. [mini-project/server.js](mini-project/server.js) loads that exact file with `express-openapi-validator`, which rejects any request that doesn't match the schema *before* the route handler runs, and serves interactive Swagger UI docs generated from the same file.
+**What the mini project does:** [mini-project/main.py](mini-project/main.py) defines a small "Bookstore" API (list, get, create, delete books) using FastAPI and Pydantic models with real constraints — required fields, types, a minimum price. FastAPI validates every request against these models automatically and generates a full OpenAPI spec and interactive Swagger UI from them, with no separate spec file to maintain.
 
 ### Step 1 — Run it
 
 ```powershell
 cd mini-project
-npm install
-node server.js
+pip install -r requirements.txt
+python main.py
 ```
 
 You'll see it running on port 4001, with docs at `/docs`.
 
 ### Step 2 — Explore the interactive docs
 
-Open http://localhost:4001/docs in a browser. This is Swagger UI, rendered entirely from `openapi.yaml` — expand `POST /books`, click **Try it out**, and you can send a real request straight from the docs page. Notice the schema shown for the request body is the exact same schema enforced by the server — there's only one definition, used for both.
+Open http://localhost:4001/docs in a browser. This is Swagger UI, generated entirely from `main.py`'s Pydantic models — expand `POST /books`, click **Try it out**, and you can send a real request straight from the docs page. Notice the schema shown for the request body matches the `NewBook` class exactly — there's only one definition, used for validation, the docs, and the generated spec.
 
 ### Step 3 — Prove the contract is enforced, not just documented
 
@@ -77,7 +76,7 @@ Send a request that violates the schema — missing a required field:
 curl -X POST http://localhost:4001/books -H "Content-Type: application/json" -d "{\"title\": \"Missing Fields\"}"
 ```
 
-You get a `400` with a structured validation error explaining exactly which field failed and why — the route handler in `server.js` never even ran; `express-openapi-validator` rejected it first, purely based on the spec.
+You get a `422` with a structured validation error explaining exactly which field failed and why — the route function in `main.py` never even ran; FastAPI rejected it first, purely based on the `NewBook` model.
 
 ### Step 4 — Send a valid request and see it succeed
 
@@ -86,11 +85,15 @@ curl -X POST http://localhost:4001/books -H "Content-Type: application/json" -d 
 curl http://localhost:4001/books
 ```
 
-The new book appears in the list, matching exactly the `Book` schema defined in `openapi.yaml`.
+The new book appears in the list, matching exactly the `Book` model defined in `main.py`.
 
-### Step 5 — Break the contract from the server side (very instructive)
+### Step 5 — Inspect the generated spec directly
 
-In `server.js`, temporarily change the `POST /books` handler to return `res.status(201).json({ title: book.title })` (dropping the required `id`, `author`, `price` fields), save, and re-run the same POST request from Step 4. Because `validateResponses: true` is set, the server itself throws an error — this is the mechanism that catches "the API stopped matching its own docs" as a bug during development, before it ever reaches a real consumer.
+```powershell
+curl http://localhost:4001/openapi.json
+```
+
+This is the actual OpenAPI 3.1 document FastAPI generated — the same artifact a hand-written `openapi.yaml` would be in the spec-first approach, except this one is guaranteed to match the code because it was built from the code, not written separately from it.
 
 ### Step 6 — Try the other real endpoints
 
@@ -100,17 +103,18 @@ curl -X DELETE http://localhost:4001/books/1
 curl http://localhost:4001/books/999
 ```
 
-The last one returns a proper `404`, exactly as declared in the spec.
+The last one returns a proper `404`, exactly as documented in the generated spec.
 
 ## Common pitfalls
 
-- **Letting the spec and the code drift apart**: this is the entire problem OpenAPI is meant to solve — if you don't wire up runtime validation like this project does, nothing stops that drift from happening again.
-- **Overly loose schemas**: a spec with no `required` fields and everything typed as `string` technically "works" but enforces almost nothing — the value of contract-first design comes from being genuinely strict.
-- **Forgetting `validateResponses` is expensive**: fine in development/CI, but measure the overhead before leaving it on in a high-throughput production service.
+- **Assuming code-first means "no discipline needed"**: the contract is only as good as your Pydantic models — vague types (e.g. everything as `str` with no constraints) generate a spec that's technically accurate but enforces almost nothing, the same trap as an overly loose hand-written spec.
+- **Forgetting `response_model` documents the OUTPUT shape**: leaving it off still works, but the generated docs lose precision about what a successful response actually looks like.
+- **Confusing this with the spec-first approach**: if you're working in a codebase that maintains a hand-written `openapi.yaml` validated at runtime (common in Node/Express), don't expect a spec file to exist here — inspect `/openapi.json` on the running app instead.
 
 ## Resources
 
 - OpenAPI Specification: https://swagger.io/specification/
-- Swagger Editor (live, in-browser): https://editor.swagger.io
-- express-openapi-validator docs: https://github.com/cdimascio/express-openapi-validator
+- FastAPI docs: https://fastapi.tiangolo.com
+- FastAPI's automatic docs guide: https://fastapi.tiangolo.com/tutorial/metadata/
+- Swagger Editor (live, in-browser, for the spec-first approach): https://editor.swagger.io
 - OpenAPI Generator (client/server codegen from a spec): https://openapi-generator.tech
