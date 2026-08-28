@@ -28,10 +28,10 @@ There's no software to install for Telegram itself — you need the Telegram app
    - Send `/newbot`
    - Follow the prompts for a display name and a unique `_bot`-suffixed username
    - BotFather replies with a **token** — this is the credential the mini project needs
-3. Install the Node bot library for this mini project:
+3. Install the Python bot library for this mini project:
    ```powershell
    cd mini-project
-   npm install
+   pip install -r requirements.txt
    ```
 
 ## Configure
@@ -54,7 +54,7 @@ There's no software to install for Telegram itself — you need the Telegram app
 
 This is a genuinely useful, complete bot — the same shape as most practical Telegram bots people actually build and keep using: parse a command, validate the input, persist it, and answer queries against that data. It uses per-chat state (SQLite keyed by `chat_id`), so it correctly tracks separate histories for every user who talks to it, which is the realistic requirement for any bot meant for more than one person.
 
-**What the mini project does:** [mini-project/bot.js](mini-project/bot.js) runs a bot with five real commands, backed by a local SQLite database ([mini-project/db.js](mini-project/db.js)):
+**What the mini project does:** [mini-project/bot.py](mini-project/bot.py) runs a bot with five real commands, backed by a local SQLite database ([mini-project/db.py](mini-project/db.py)):
 - `/add <amount> <category>` — log an expense, with real input validation (rejects non-numeric amounts instead of silently corrupting data)
 - `/list` — show your last 10 entries
 - `/summary` — totals grouped by category
@@ -77,7 +77,7 @@ Edit `.env` and paste in the token BotFather gave you.
 ### Step 3 — Run it
 
 ```powershell
-node bot.js
+python bot.py
 ```
 
 You'll see `Expense bot is running (long polling).` Open Telegram, find your bot by the username you gave it, and send `/start`.
@@ -104,8 +104,9 @@ Have a friend (or a second Telegram account) message the same bot and run `/add`
 The database is a plain SQLite file (`mini-project/expenses.db`) — open it with any SQLite browser, or query it directly:
 
 ```powershell
-npx sqlite3 expenses.db "SELECT * FROM expenses;"
+sqlite3 expenses.db "SELECT * FROM expenses;"
 ```
+(See [../sqlite/README.md](../sqlite/README.md) if you need the `sqlite3` CLI itself installed.)
 
 Seeing your own bot's data sitting in an ordinary, inspectable file (versus a black-box cloud database) is a big part of why this is a good first real bot to build.
 
@@ -130,6 +131,6 @@ Long polling is fine for development but wastes resources at scale (constant "an
 ## Resources
 
 - Bot API reference: https://core.telegram.org/bots/api
-- node-telegram-bot-api docs: https://github.com/yagop/node-telegram-bot-api
+- python-telegram-bot docs: https://docs.python-telegram-bot.org
 - Bot development FAQ: https://core.telegram.org/bots/faq
 - Webhook guide: https://core.telegram.org/bots/webhooks
