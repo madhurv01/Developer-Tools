@@ -73,7 +73,7 @@ The last command downloads a tiny test image and runs it — if you see "Hello f
 
 This is a genuinely common real-world shape: a stateless API container talking to a separate, stateful Redis container for shared data (session storage, rate limiting, counters, caching expensive computations). It's exactly the kind of thing you cannot properly demonstrate with a single container — it needs Docker Compose to show container-to-container networking and persistent volumes, which is where Docker's real value shows up.
 
-**What the mini project does:** a small Node API ([mini-project/server.js](mini-project/server.js)) that increments a visit counter stored in Redis every time you hit `/`, and reports stats from `/stats`. The API and Redis run as **two separate containers**, wired together by [mini-project/docker-compose.yml](mini-project/docker-compose.yml).
+**What the mini project does:** a small Go API ([mini-project/main.go](mini-project/main.go)) that increments a visit counter stored in Redis every time you hit `/`, and reports stats from `/stats`. The API and Redis run as **two separate containers**, wired together by [mini-project/docker-compose.yml](mini-project/docker-compose.yml). Go was picked deliberately here so the [mini-project/Dockerfile](mini-project/Dockerfile) can also demonstrate a real **multi-stage build** — see "Reading the Dockerfile" below.
 
 ### Step 1 — Build and start both containers
 
@@ -82,7 +82,7 @@ cd mini-project
 docker compose up --build
 ```
 
-Watch the logs: you'll see the `redis` container start first, then the `api` container connect to it at `redis://redis:6379` — note that's the **service name**, not `localhost` or an IP. Compose's built-in DNS is what makes `redis` resolve to the right container automatically.
+Watch the logs: you'll see the `redis` container start first, then the `api` container connect to it at `redis:6379` — note that's the **service name**, not `localhost` or an IP. Compose's built-in DNS is what makes `redis` resolve to the right container automatically.
 
 ### Step 2 — Generate some traffic
 
@@ -124,13 +124,16 @@ The `-v` flag deletes the named volume too — without it, `docker compose down`
 
 ## Reading the Dockerfile
 
-[mini-project/Dockerfile](mini-project/Dockerfile) demonstrates the standard real-world optimization: `package.json` is copied and `npm install` is run *before* the rest of the source code is copied in. Docker caches each instruction as a layer — as long as `package.json` hasn't changed, Docker reuses the cached `npm install` layer on every rebuild instead of re-downloading dependencies, which is the difference between a 20-second rebuild and a 2-minute one on any real project.
+[mini-project/Dockerfile](mini-project/Dockerfile) demonstrates two standard real-world optimizations:
+
+1. **Layer caching**: `go.mod` is copied and dependencies are resolved (`go mod tidy`) *before* the rest of the source code is copied in. Docker caches each instruction as a layer — as long as `go.mod` hasn't changed, Docker reuses the cached dependency-resolution layer on every rebuild instead of re-downloading anything.
+2. **Multi-stage builds**: the `builder` stage has the full Go toolchain (hundreds of MB); the final stage copies out *only* the compiled binary into a minimal `alpine` base image. Run `docker images` after building and compare — the final image is a small fraction of the size the build stage needed, and it ships with no compiler, no source code, and no language runtime at all, just one static binary. This is the real reason compiled languages and Docker pair so well in production: the shipped artifact is genuinely minimal.
 
 ## Common pitfalls
 
 - **Using `localhost` between containers**: containers each have their own network namespace — `localhost` inside the `api` container refers to the `api` container itself, not the `redis` container. Always use the service name from `docker-compose.yml`.
 - **Forgetting `-v` leaves old data around**: if you change your data model and things look "stuck," check whether an old volume is still there with `docker volume ls`.
-- **Editing code but not seeing changes**: this Dockerfile `COPY`s source at build time, so you must `docker compose up --build` (not just `up`) after changing `server.js`.
+- **Editing code but not seeing changes**: this Dockerfile `COPY`s source at build time, so you must `docker compose up --build` (not just `up`) after changing `main.go`.
 
 ## Resources
 
