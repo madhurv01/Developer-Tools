@@ -27,10 +27,10 @@ There's nothing to install to use Groq itself — it's a hosted API. You install
 2. Install the SDK for this mini project:
    ```powershell
    cd mini-project
-   npm install
+   pip install -r requirements.txt
    ```
 
-Groq also publishes SDKs for Python, and — because the API is OpenAI-compatible — you can often use the standard `openai` SDK directly, just pointed at `https://api.groq.com/openai/v1` instead of OpenAI's endpoint, which is a genuinely common way teams migrate an existing OpenAI-based project to try Groq with minimal code changes.
+Groq also publishes an SDK for Node/JS, and — because the API is OpenAI-compatible — you can often use the standard `openai` SDK directly, just pointed at `https://api.groq.com/openai/v1` instead of OpenAI's endpoint, which is a genuinely common way teams migrate an existing OpenAI-based project to try Groq with minimal code changes.
 
 ## Configure
 
@@ -51,14 +51,14 @@ Groq also publishes SDKs for Python, and — because the API is OpenAI-compatibl
 This is the actual shape of problem Groq gets reached for: turning unstructured, real-time text into structured, actionable data fast enough to act on immediately — plus a direct, visible benchmark of the low-latency streaming experience Groq is chosen for in voice and chat products.
 
 **What the mini project does:**
-- [mini-project/triage-tickets.js](mini-project/triage-tickets.js) sends four realistic, messy support messages through Groq's **JSON mode**, which constrains the model to return valid structured JSON (category, urgency, sentiment, summary) that can be parsed and routed automatically — no fragile regex-parsing of free text. It prints the latency and tokens/sec for each one.
-- [mini-project/stream-benchmark.js](mini-project/stream-benchmark.js) streams a response token-by-token to your terminal in real time, and reports **time-to-first-token** and **sustained tokens/sec** — the two numbers that actually determine whether a real-time AI feature feels instant or sluggish.
+- [mini-project/triage_tickets.py](mini-project/triage_tickets.py) sends four realistic, messy support messages through Groq's **JSON mode**, which constrains the model to return valid structured JSON (category, urgency, sentiment, summary) that can be parsed and routed automatically — no fragile regex-parsing of free text. It prints the latency and tokens/sec for each one.
+- [mini-project/stream_benchmark.py](mini-project/stream_benchmark.py) streams a response token-by-token to your terminal in real time, and reports **time-to-first-token** and **sustained tokens/sec** — the two numbers that actually determine whether a real-time AI feature feels instant or sluggish.
 
 ### Step 1 — Set up your API key
 
 ```powershell
 cd mini-project
-npm install
+pip install -r requirements.txt
 copy .env.example .env
 ```
 
@@ -67,7 +67,7 @@ Edit `.env` and paste in your key from https://console.groq.com/keys.
 ### Step 2 — Run the ticket triage pipeline
 
 ```powershell
-npm run triage
+python triage_tickets.py
 ```
 
 Watch each of the four unstructured messages get turned into clean structured JSON — category, urgency, sentiment, and a one-sentence summary — with real latency and tokens/sec numbers printed for each. Notice the angry billing complaint gets classified `category: billing`, `urgency: high`, `sentiment: negative` correctly, purely from the raw, informally-written text — this is the actual, realistic input shape a support inbox produces.
@@ -75,18 +75,18 @@ Watch each of the four unstructured messages get turned into clean structured JS
 ### Step 3 — Run the streaming latency benchmark
 
 ```powershell
-npm run stream
+python stream_benchmark.py
 ```
 
 Watch the response print token by token in real time, then read the benchmark numbers at the end — time-to-first-token in particular. This is the exact UX and the exact metric behind "why does this AI feature feel instant" in a well-built product versus one that makes users stare at a loading spinner.
 
 ### Step 4 — Compare models (optional, very instructive)
 
-In either script, change `model: "llama-3.1-8b-instant"` to a larger model from https://console.groq.com/docs/models and re-run. You'll see the quality/speed trade-off directly: a larger model may reason slightly better but streams measurably slower — the real decision every team building on Groq has to make for their specific use case.
+In either script, change `model="llama-3.1-8b-instant"` to a larger model from https://console.groq.com/docs/models and re-run. You'll see the quality/speed trade-off directly: a larger model may reason slightly better but streams measurably slower — the real decision every team building on Groq has to make for their specific use case.
 
 ### Step 5 — Break the JSON mode contract (optional, instructive)
 
-In `triage-tickets.js`, temporarily change the system prompt to remove the explicit JSON shape instructions while keeping `response_format: { type: "json_object" }`. Re-run — you'll likely still get valid JSON (the mode enforces valid JSON syntax), but the *fields* may no longer match what your downstream code expects, since only the prompt — not the API — defines the actual shape. This is the real lesson behind JSON mode: it guarantees parseable output, not a specific schema, so the schema still has to be specified clearly in your prompt (or enforced with a stricter tool-calling / function-schema approach for critical pipelines).
+In `triage_tickets.py`, temporarily change the system prompt to remove the explicit JSON shape instructions while keeping `response_format={"type": "json_object"}`. Re-run — you'll likely still get valid JSON (the mode enforces valid JSON syntax), but the *fields* may no longer match what your downstream code expects, since only the prompt — not the API — defines the actual shape. This is the real lesson behind JSON mode: it guarantees parseable output, not a specific schema, so the schema still has to be specified clearly in your prompt (or enforced with a stricter tool-calling / function-schema approach for critical pipelines).
 
 ## Common pitfalls
 
