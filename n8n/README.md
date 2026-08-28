@@ -57,12 +57,13 @@ This is a realistic shape for a huge category of automations: **poll something o
 **What the mini project does:** an n8n workflow ([mini-project/price-monitor-workflow.json](mini-project/price-monitor-workflow.json)) that, every minute:
 1. Calls the public CoinGecko API (no API key required) for the current Bitcoin price.
 2. Checks an `IF` condition (price above a threshold).
-3. If true, sends a POST request to an "alert" endpoint — in a real deployment this would be a Slack incoming webhook URL; here it's a local Node server ([mini-project/alert-server.js](mini-project/alert-server.js)) that logs the alert, so you can see the entire pipeline fire end-to-end with zero external accounts needed.
+3. If true, sends a POST request to an "alert" endpoint — in a real deployment this would be a Slack incoming webhook URL; here it's a local Flask server ([mini-project/alert_server.py](mini-project/alert_server.py)) that logs the alert, so you can see the entire pipeline fire end-to-end with zero external accounts needed.
 
 ### Step 1 — Start the alert receiver
 
 ```powershell
-node mini-project/alert-server.js
+pip install -r mini-project/requirements.txt
+python mini-project/alert_server.py
 ```
 
 This simulates the Slack/Discord webhook n8n would normally call.
@@ -88,7 +89,7 @@ Open the "Price Above Threshold?" node and change the comparison value from `1` 
 
 ### Step 5 — Activate and watch it run
 
-Click **Execute workflow** to run it once immediately, or toggle **Active** (top right) to let the Schedule Trigger run it automatically every minute. Watch the `alert-server.js` terminal — you should see `=== ALERT RECEIVED ===` with the live BTC price whenever the condition is met.
+Click **Execute workflow** to run it once immediately, or toggle **Active** (top right) to let the Schedule Trigger run it automatically every minute. Watch the `alert_server.py` terminal — you should see `=== ALERT RECEIVED ===` with the live BTC price whenever the condition is met.
 
 ### Step 6 — Inspect a real execution
 
