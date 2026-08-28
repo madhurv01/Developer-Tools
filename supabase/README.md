@@ -26,9 +26,10 @@ Supabase itself is a hosted cloud platform (with a generous free tier) — there
 2. In your new project, go to **Project Settings → API** and copy two values you'll need shortly:
    - **Project URL**
    - **anon public key** (safe to use in client-side/browser code — it has no power on its own without RLS policies granting access)
-3. Install the JS client in your own project:
+3. Install the Python client for this mini project:
    ```powershell
-   npm install @supabase/supabase-js
+   cd mini-project
+   pip install -r requirements.txt
    ```
 
 ### Optional: self-hosting
@@ -55,14 +56,14 @@ This mirrors the actual foundation of most real Supabase apps: **more than one u
 
 **What the mini project does:**
 - [mini-project/schema.sql](mini-project/schema.sql) creates a `tasks` table with Row Level Security enabled and four policies — a user can only select/insert/update/delete rows where `user_id` matches their own authenticated id.
-- [mini-project/run-as-user.js](mini-project/run-as-user.js) signs in as one of two test users, inserts a task, then reads back the table — proving each user only ever sees their own rows.
-- [mini-project/realtime-listener.js](mini-project/realtime-listener.js) subscribes to live changes on the table and prints them the instant either user inserts something.
+- [mini-project/run_as_user.py](mini-project/run_as_user.py) signs in as one of two test users, inserts a task, then reads back the table — proving each user only ever sees their own rows.
+- [mini-project/realtime_listener.py](mini-project/realtime_listener.py) subscribes to live changes on the table and prints them the instant either user inserts something.
 
 ### Step 1 — Set up your project credentials
 
 ```powershell
 cd mini-project
-npm install
+pip install -r requirements.txt
 copy .env.example .env
 ```
 
@@ -75,33 +76,33 @@ In the Supabase Dashboard, open **SQL Editor → New query**, paste the contents
 ### Step 3 — Prove isolation between two users
 
 ```powershell
-node run-as-user.js userA
+python run_as_user.py userA
 ```
 
 This creates (or signs into) a test account, inserts a task, and lists every task that account can see. Now run:
 
 ```powershell
-node run-as-user.js userB
+python run_as_user.py userB
 ```
 
 `userB` sees **only their own task**, never `userA`'s — even though both requests hit the exact same table through the exact same public `anon` key. This is Postgres itself enforcing the boundary, not application logic you wrote.
 
 ### Step 4 — Try to break it (optional, very instructive)
 
-Temporarily comment out the `create policy "Users can view their own tasks"` block in `schema.sql`, re-run just that change in the SQL Editor, and re-run `node run-as-user.js userA` — now the account can insert but reads back **zero rows**, because RLS is on but no policy grants select access. This demonstrates the fail-safe default: with RLS enabled and no matching policy, access is denied, not allowed.
+Temporarily comment out the `create policy "Users can view their own tasks"` block in `schema.sql`, re-run just that change in the SQL Editor, and re-run `python run_as_user.py userA` — now the account can insert but reads back **zero rows**, because RLS is on but no policy grants select access. This demonstrates the fail-safe default: with RLS enabled and no matching policy, access is denied, not allowed.
 
 ### Step 5 — Watch it update live
 
 In one terminal:
 
 ```powershell
-npm run listen
+python realtime_listener.py
 ```
 
 In a second terminal:
 
 ```powershell
-npm run user-a
+python run_as_user.py userA
 ```
 
 The listener terminal prints the new row the instant it's inserted — no polling, no refresh, no custom server. This is the exact mechanism behind live dashboards, collaborative tools, and chat apps built on Supabase.
