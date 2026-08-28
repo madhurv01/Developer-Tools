@@ -32,12 +32,14 @@ Verify:
 vercel --version
 ```
 
+The CLI itself is distributed via npm regardless of what language your functions are written in — this mini project's actual serverless functions are Python, which Vercel's runtime auto-detects from the `.py` files under `api/`. You'll need Python installed locally for `vercel dev` to run them (no `pip install` needed for this mini project — it uses only the standard library).
+
 You'll also want a free account: https://vercel.com/signup (GitHub sign-in is the common choice, since it enables the git-push-to-deploy workflow covered in "Going further" below).
 
 ## Configure
 
 - **`vercel login`**: authenticates the CLI with your account — required before your first deploy.
-- **Environment variables**: set via the dashboard (**Project → Settings → Environment Variables**) or the CLI (`vercel env add`) — never hardcoded in source. This mini project's [mini-project/api/health.js](mini-project/api/health.js) reads a project-defined `CUSTOM_GREETING` variable to demonstrate this directly.
+- **Environment variables**: set via the dashboard (**Project → Settings → Environment Variables**) or the CLI (`vercel env add`) — never hardcoded in source. This mini project's [mini-project/api/health.py](mini-project/api/health.py) reads a project-defined `CUSTOM_GREETING` variable to demonstrate this directly.
 - **`vercel.json`** (included in this mini project): project-level configuration — this one sets a `Cache-Control` header on all `/api/*` responses so you always see live data instead of a cached response while testing.
 - **Zero-config framework detection**: Vercel auto-detects the framework (Next.js, plain static + `/api`, etc.) from your project structure — this mini project deliberately uses the simplest possible shape (`public/` for static files, `api/` for serverless functions) so nothing needs explicit configuration to deploy.
 
@@ -55,8 +57,8 @@ This is the actual shape of a huge number of real Vercel projects: a static fron
 
 **What the mini project does:**
 - [mini-project/public/index.html](mini-project/public/index.html) — a waitlist signup form.
-- [mini-project/api/subscribe.js](mini-project/api/subscribe.js) — a real serverless function handling the POST, with input validation and a deliberately-flawed in-memory rate limiter (see Step 5 — this is a genuine, common mistake, left in on purpose).
-- [mini-project/api/health.js](mini-project/api/health.js) — demonstrates reading both Vercel's built-in environment variables and a variable you configure yourself.
+- [mini-project/api/subscribe.py](mini-project/api/subscribe.py) — a real serverless function (Vercel's Python runtime) handling the POST, with input validation and a deliberately-flawed in-memory rate limiter (see Step 5 — this is a genuine, common mistake, left in on purpose).
+- [mini-project/api/health.py](mini-project/api/health.py) — demonstrates reading both Vercel's built-in environment variables and a variable you configure yourself.
 
 ### Step 1 — Run it locally first
 
@@ -99,7 +101,7 @@ Visit `https://<your-deployment-url>/api/health` — your custom value now appea
 
 ### Step 5 — Find the deliberate bug (the actual, common serverless mistake)
 
-Open two different browser tabs (or use `curl` from two different terminals) and submit the waitlist form rapidly, several times in a row, from what should be the same "IP." Because Vercel may route your requests to **different serverless function instances**, each with its own separate, empty `recentSubmissions` Map, the rate limiter in `api/subscribe.js` doesn't reliably block rapid duplicate submissions — a real, common mistake teams make the first time they move logic that depended on a long-lived server's memory into a stateless serverless function.
+Open two different browser tabs (or use `curl` from two different terminals) and submit the waitlist form rapidly, several times in a row, from what should be the same "IP." Because Vercel may route your requests to **different serverless function instances**, each with its own separate, empty `recent_submissions` dict, the rate limiter in `api/subscribe.py` doesn't reliably block rapid duplicate submissions — a real, common mistake teams make the first time they move logic that depended on a long-lived server's memory into a stateless serverless function.
 
 ## Going further: fixing the rate limiter properly
 

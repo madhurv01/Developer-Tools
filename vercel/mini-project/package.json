@@ -1,6 +1,0 @@
-{
-  "name": "vercel-waitlist-demo",
-  "version": "1.0.0",
-  "private": true,
-  "description": "A static page + serverless API functions, deployable to Vercel as-is"
-}
