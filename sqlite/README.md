@@ -32,14 +32,15 @@ Verify:
 sqlite3 --version
 ```
 
-### For this mini project (Node)
+### For this mini project (Python)
+
+Nothing to install — this mini project deliberately uses only Python's standard library. `sqlite3` ships built into every standard Python install, which is itself a real reason Python and SQLite are such a common pairing for CLI tools and small scripts: a real relational database with zero extra dependencies.
 
 ```powershell
-cd mini-project
-npm install
+python --version
 ```
 
-This installs `better-sqlite3`, the standard synchronous, high-performance SQLite driver for Node — synchronous is a deliberate design choice for SQLite specifically, since queries are typically fast enough that async overhead isn't worth the complexity for most use cases.
+Any Python 3.x install already has everything this mini project needs.
 
 ## Configure
 
@@ -60,30 +61,29 @@ This installs `better-sqlite3`, the standard synchronous, high-performance SQLit
 This demonstrates the two things that actually distinguish SQLite from "a simple file-based key-value store": a real, ranked full-text search index (FTS5), and the transaction-batching behavior that matters the moment you're doing more than a handful of writes.
 
 **What the mini project does:**
-- [mini-project/notes-cli.js](mini-project/notes-cli.js) — a notes CLI backed entirely by one `notes.db` file, with an FTS5 virtual table kept in sync via triggers, so searching is fast and ranked by relevance (`bm25()`), not a slow `LIKE '%...%'` scan.
-- [mini-project/transaction-benchmark.js](mini-project/transaction-benchmark.js) — inserts 5,000 rows twice, once without a transaction and once wrapped in one, and prints the real measured speedup.
+- [mini-project/notes_cli.py](mini-project/notes_cli.py) — a notes CLI backed entirely by one `notes.db` file, with an FTS5 virtual table kept in sync via triggers, so searching is fast and ranked by relevance (`bm25()`), not a slow `LIKE '%...%'` scan.
+- [mini-project/transaction_benchmark.py](mini-project/transaction_benchmark.py) — inserts 5,000 rows twice, once committing after every row and once wrapped in a single transaction, and prints the real measured speedup.
 
 ### Step 1 — Add some notes
 
 ```powershell
 cd mini-project
-npm install
-node notes-cli.js add "Groceries" "Buy milk, eggs, bread, and coffee beans"
-node notes-cli.js add "Project idea" "Build a local-first notes app with full-text search using SQLite FTS5"
-node notes-cli.js add "Meeting notes" "Discussed Q3 roadmap, database migration timeline, and hiring plan"
-node notes-cli.js list
+python notes_cli.py add "Groceries" "Buy milk, eggs, bread, and coffee beans"
+python notes_cli.py add "Project idea" "Build a local-first notes app with full-text search using SQLite FTS5"
+python notes_cli.py add "Meeting notes" "Discussed Q3 roadmap, database migration timeline, and hiring plan"
+python notes_cli.py list
 ```
 
 ### Step 2 — Search it for real
 
 ```powershell
-node notes-cli.js search "database"
+python notes_cli.py search "database"
 ```
 
 Notice this matches "Project idea" (mentions "SQLite") only if the word "database" actually appears — try:
 
 ```powershell
-node notes-cli.js search "roadmap hiring"
+python notes_cli.py search "roadmap hiring"
 ```
 
 This returns the meeting notes, ranked by relevance via FTS5's built-in `bm25()` scoring — a real, fast, ranked search index, entirely inside the same file as your data, no separate search service involved.
@@ -91,16 +91,16 @@ This returns the meeting notes, ranked by relevance via FTS5's built-in `bm25()`
 ### Step 3 — Prove the FTS index stays in sync automatically
 
 ```powershell
-node notes-cli.js delete 1
-node notes-cli.js search "milk"
+python notes_cli.py delete 1
+python notes_cli.py search "milk"
 ```
 
-Zero results — the delete trigger removed it from the search index too, automatically, because the triggers defined in `notes-cli.js` keep `notes_fts` in sync with the real `notes` table on every insert/update/delete.
+Zero results — the delete trigger removed it from the search index too, automatically, because the triggers defined in `notes_cli.py` keep `notes_fts` in sync with the real `notes` table on every insert/update/delete.
 
 ### Step 4 — Run the transaction benchmark
 
 ```powershell
-node transaction-benchmark.js
+python transaction_benchmark.py
 ```
 
 You'll see two real, measured timings — inserting 5,000 rows one statement at a time versus the exact same 5,000 inserts wrapped in a single transaction — with the speedup multiplier printed at the end. This is a real, common mistake in production code: bulk-loading data (a CSV import, a migration, a seed script) without wrapping it in a transaction, and being surprised it's dramatically slower than expected.
@@ -126,4 +126,4 @@ This is the entire "database" — one file, inspectable with the plain `sqlite3`
 - Docs: https://www.sqlite.org/docs.html
 - FTS5 (full-text search): https://www.sqlite.org/fts5.html
 - WAL mode: https://www.sqlite.org/wal.html
-- better-sqlite3 (Node driver) docs: https://github.com/WiseLibs/better-sqlite3
+- Python `sqlite3` module docs: https://docs.python.org/3/library/sqlite3.html
