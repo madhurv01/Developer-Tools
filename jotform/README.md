@@ -18,20 +18,20 @@ A form is one of the most common "collect real-world input" points in front of a
 
 ## Install
 
-There's nothing to install for Jotform itself — it's a hosted platform. You need a free account and, for this mini project, Node for the receiver/API scripts.
+There's nothing to install for Jotform itself — it's a hosted platform. You need a free account and, for this mini project, Python for the receiver/API scripts.
 
 1. Create a free account: https://www.jotform.com/signup
 2. Get an API key: **Settings → API → Create New Key** (https://www.jotform.com/myaccount/api)
 3. Install this mini project's dependencies:
    ```powershell
    cd mini-project
-   npm install
+   pip install -r requirements.txt
    ```
 
 ## Configure
 
 - **API key as an environment variable**: this project uses a `.env` file (see [mini-project/.env.example](mini-project/.env.example)) — the same pattern as every other tool in this repo. Treat it like a password; it grants full access to your forms and submissions.
-- **Webhooks vs. the REST API — two real, different integration patterns**: a **webhook** pushes each submission to your server the instant it happens (real-time, used in this mini project's `webhook-server.js`); the **REST API** is pulled on your own schedule (used in `fetch-submissions.js`, good for exports, backfills, or reports). Real projects often use both — a webhook for immediate reaction, the API for periodic reconciliation in case a webhook delivery was ever missed.
+- **Webhooks vs. the REST API — two real, different integration patterns**: a **webhook** pushes each submission to your server the instant it happens (real-time, used in this mini project's `webhook_server.py`); the **REST API** is pulled on your own schedule (used in `fetch_submissions.py`, good for exports, backfills, or reports). Real projects often use both — a webhook for immediate reaction, the API for periodic reconciliation in case a webhook delivery was ever missed.
 - **Registering a webhook**: in the Jotform form builder, **Settings → Integrations → Webhooks**, paste in your endpoint's public URL. Since Jotform needs to reach your server over the internet, this is a genuine, realistic use of [ngrok](../ngrok/README.md) during development — see Step 4 below.
 
 ## Core use cases
@@ -47,9 +47,9 @@ There's nothing to install for Jotform itself — it's a hosted platform. You ne
 This is a genuinely common real pattern: a form anyone (customers, teammates, testers) can fill out, wired to a webhook that automatically triages incoming reports by severity — the same shape as a real support/bug-tracking intake pipeline, without needing a full ticketing system to get started.
 
 **What the mini project does:**
-- [mini-project/webhook-server.js](mini-project/webhook-server.js) — a real webhook receiver that parses Jotform's actual payload shape (`rawRequest`, a JSON string of auto-generated question keys), matches answers by question text rather than brittle exact key names, logs every submission, and separately flags anything marked High/Critical severity into its own urgent log.
-- [mini-project/simulate-jotform-submission.js](mini-project/simulate-jotform-submission.js) — sends a realistically-shaped fake submission so you can test the receiver before connecting a real Jotform account.
-- [mini-project/fetch-submissions.js](mini-project/fetch-submissions.js) — pulls recent submissions directly from the Jotform REST API, the alternate "pull" integration pattern.
+- [mini-project/webhook_server.py](mini-project/webhook_server.py) — a real webhook receiver (Flask) that parses Jotform's actual payload shape (`rawRequest`, a JSON string of auto-generated question keys), matches answers by question text rather than brittle exact key names, logs every submission, and separately flags anything marked High/Critical severity into its own urgent log.
+- [mini-project/simulate_jotform_submission.py](mini-project/simulate_jotform_submission.py) — sends a realistically-shaped fake submission so you can test the receiver before connecting a real Jotform account.
+- [mini-project/fetch_submissions.py](mini-project/fetch_submissions.py) — pulls recent submissions directly from the Jotform REST API, the alternate "pull" integration pattern.
 
 ### Step 1 — Build a real form in Jotform
 
@@ -59,21 +59,21 @@ In the Jotform builder, create a short form with at least: a Name field, an Emai
 
 ```powershell
 cd mini-project
-npm install
-node webhook-server.js
+pip install -r requirements.txt
+python webhook_server.py
 ```
 
 In another terminal:
 
 ```powershell
-node simulate-jotform-submission.js
+python simulate_jotform_submission.py
 ```
 
 Check the first terminal — you'll see the submission logged, and because the simulated severity is "High," you'll also see it flagged in `URGENT SUBMISSION DETECTED`. Open `mini-project/submissions.log` and `mini-project/urgent-issues.log` to see both written to disk.
 
 ### Step 3 — Prove the resilient field-matching works
 
-Open `simulate-jotform-submission.js` and rename `q5_severity` to `q9_severity` (simulating what happens when someone edits the real form and Jotform regenerates its question keys), rerun the simulation — the receiver still correctly finds and triages it, because `findAnswer()` matches on the word "severity" inside the key, not an exact key name. This is the real, practical reason to match by question text fragment instead of hardcoding Jotform's auto-generated keys.
+Open `simulate_jotform_submission.py` and rename `q5_severity` to `q9_severity` (simulating what happens when someone edits the real form and Jotform regenerates its question keys), rerun the simulation — the receiver still correctly finds and triages it, because `find_answer()` matches on the word "severity" inside the key, not an exact key name. This is the real, practical reason to match by question text fragment instead of hardcoding Jotform's auto-generated keys.
 
 ### Step 4 — Connect a real Jotform webhook using ngrok
 
@@ -92,7 +92,7 @@ copy .env.example .env
 Fill in your `JOTFORM_API_KEY` and the `JOTFORM_FORM_ID` from Step 1, then:
 
 ```powershell
-npm run fetch
+python fetch_submissions.py
 ```
 
 You get the same submissions back, this time pulled on-demand from the API rather than pushed via webhook — useful for a nightly reconciliation job that catches anything a webhook delivery might have missed.
