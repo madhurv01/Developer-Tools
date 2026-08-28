@@ -81,8 +81,9 @@ Each README follows the same fixed structure, so any tool in this repo can be sk
 | [streamlit](streamlit/README.md) | Open source — Python data apps | Turning a Python script into an interactive web app | A filterable sales dashboard, deployed live to Streamlit Community Cloud |
 | [jotform](jotform/README.md) | Core dev tool — forms / intake | Turning a visual form builder's output into real backend logic | A bug-report intake form with a live webhook triage pipeline |
 | [sqlite](sqlite/README.md) | Open source — embedded database | A serverless, single-file relational database | A local-first notes app with FTS5 full-text search + a transaction benchmark |
+| [google-ai-studio](google-ai-studio/README.md) | AI tool — prompt prototyping | Visually prototyping multimodal prompts, then exporting real code | A receipt scanner: prototype in-browser, ship as a structured-output script |
 
-Sixteen tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
+Seventeen tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
 
 ## Where this is headed
 
