@@ -55,7 +55,7 @@ newman --version
 
 This is the actual industry pattern: log in once, automatically capture the token, and reuse it across a full sequence of requests — including **negative tests** that prove the API correctly *rejects* bad input, which is just as important as proving it accepts good input, and is something a lot of hand-testing skips entirely.
 
-**What the mini project does:** a small "Orders" API ([mini-project/server.js](mini-project/server.js)) with real token-based auth, tested end-to-end by a Postman collection ([mini-project/Orders-API.postman_collection.json](mini-project/Orders-API.postman_collection.json)) with six requests that chain together:
+**What the mini project does:** a small "Orders" API ([mini-project/main.go](mini-project/main.go), plain Go standard library, no framework) with real token-based auth, tested end-to-end by a Postman collection ([mini-project/Orders-API.postman_collection.json](mini-project/Orders-API.postman_collection.json)) with six requests that chain together:
 1. **Login** — captures the returned token into a collection variable via a test script.
 2. **List Orders** — uses that token, asserts a 200 and an array response.
 3. **Create Order** — uses the token, asserts the response shape, captures the new order's id.
@@ -67,8 +67,7 @@ This is the actual industry pattern: log in once, automatically capture the toke
 
 ```powershell
 cd mini-project
-npm install
-node server.js
+go run main.go
 ```
 
 ### Step 2 — Run the collection in the Postman desktop app
@@ -87,7 +86,7 @@ Newman prints a full pass/fail report for every assertion in every request, with
 
 ### Step 4 — Prove the negative tests actually catch a real regression
 
-In `mini-project/server.js`, comment out the `requireAuth` middleware on the `GET /orders` route (remove it from that one line), save, restart the server, and re-run Newman. Request 5 ("Reject Missing Auth") now **fails** — because the endpoint is no longer actually protected. This is the exact mechanism that would catch someone accidentally weakening your API's security in a future code change, before it ships.
+In `mini-project/main.go`, comment out the `if !requireAuth(r) { ... }` check at the top of `ordersHandler`, save, restart the server (`go run main.go`), and re-run Newman. Request 5 ("Reject Missing Auth") now **fails** — because the endpoint is no longer actually protected. This is the exact mechanism that would catch someone accidentally weakening your API's security in a future code change, before it ships.
 
 ### Step 5 — Add your own negative test (optional)
 
