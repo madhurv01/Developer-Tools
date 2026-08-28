@@ -88,7 +88,7 @@ ngrok version
 
 This is the actual workflow used when building GitHub Apps, CI bots, or "auto-deploy on push" tooling — you cannot register a GitHub webhook against `localhost`, so this is the realistic way people build and test these integrations before ever deploying.
 
-**What the mini project does:** a Node HTTP server ([mini-project/webhook-server.js](mini-project/webhook-server.js)) that:
+**What the mini project does:** a Flask server ([mini-project/webhook_server.py](mini-project/webhook_server.py)) that:
 - Exposes a `POST /webhook` endpoint
 - Verifies the `X-Hub-Signature-256` HMAC header exactly the way GitHub's docs require, so it rejects forged requests
 - Parses real GitHub `push` event payloads and logs who pushed, to which branch, and how many commits — the exact point where a real system would kick off a deploy script
@@ -98,7 +98,8 @@ This is the actual workflow used when building GitHub Apps, CI bots, or "auto-de
 
 ```powershell
 cd mini-project
-node webhook-server.js
+pip install -r requirements.txt
+python webhook_server.py
 ```
 
 You'll see it listening on port 3000 with the shared secret it's using (`my-local-dev-secret` by default — override with the `WEBHOOK_SECRET` env var).
@@ -108,10 +109,10 @@ You'll see it listening on port 3000 with the shared secret it's using (`my-loca
 In a second terminal:
 
 ```powershell
-node mini-project/simulate-github-push.js
+python mini-project/simulate_github_push.py
 ```
 
-This sends a correctly-signed fake `push` payload. Check the first terminal — you should see `Verified GitHub event: push` and a line written to `mini-project/deploy.log`. Now edit `simulate-github-push.js` to send a wrong secret and re-run it — you'll see the server reject it with a 401, exactly what happens when someone tries to spoof a webhook.
+This sends a correctly-signed fake `push` payload. Check the first terminal — you should see `Verified GitHub event: push` and a line written to `mini-project/deploy.log`. Now edit `simulate_github_push.py` to send a wrong secret and re-run it — you'll see the server reject it with a 401, exactly what happens when someone tries to spoof a webhook.
 
 ### Step 3 — Expose it and wire up a real GitHub repo (optional but recommended)
 
