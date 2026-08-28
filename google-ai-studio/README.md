@@ -27,13 +27,13 @@ There's nothing to install to use AI Studio itself — it's entirely browser-bas
 3. Install the SDK for this mini project:
    ```powershell
    cd mini-project
-   npm install
+   pip install -r requirements.txt
    ```
 
 ## Configure
 
 - **API key as an environment variable**: this project uses a `.env` file (see [mini-project/.env.example](mini-project/.env.example)), the same pattern used throughout this repo — never hardcode it in source.
-- **`responseSchema`** (used in this mini project's `receipt-scanner.js`): the real mechanism behind reliable structured output — unlike asking a model to "please respond in JSON" in plain prompt text, a schema *constrains* the response to match exactly, which is what makes `JSON.parse()` on the result safe to rely on in real code.
+- **`response_schema`** (used in this mini project's `receipt_scanner.py`): the real mechanism behind reliable structured output — unlike asking a model to "please respond in JSON" in plain prompt text, a schema *constrains* the response to match exactly, which is what makes `json.loads()` on the result safe to rely on in real code.
 - **Model choice**: AI Studio lets you switch models (different Gemini variants trade off speed, cost, and capability) and see the difference immediately in the UI before picking one for your exported code — this mini project uses `gemini-2.0-flash`, a fast, low-cost default good for structured extraction tasks like this one.
 
 ## Core use cases
@@ -48,7 +48,7 @@ There's nothing to install to use AI Studio itself — it's entirely browser-bas
 
 This is the actual, intended AI Studio workflow: validate that a multimodal prompt works the way you need against a real image, directly in the browser, then export and run the equivalent as a genuine standalone script — the exact same model call, now callable from your own application.
 
-**What the mini project does:** [mini-project/receipt-scanner.js](mini-project/receipt-scanner.js) takes a photo of a receipt and extracts structured data from it — merchant name, date, total, currency, and a line-item breakdown — using Gemini's multimodal input and a strict `responseSchema`, then cross-checks the extracted line items against the extracted total as a basic sanity check on the model's own output.
+**What the mini project does:** [mini-project/receipt_scanner.py](mini-project/receipt_scanner.py) takes a photo of a receipt and extracts structured data from it — merchant name, date, total, currency, and a line-item breakdown — using Gemini's multimodal input and a strict `response_schema`, then cross-checks the extracted line items against the extracted total as a basic sanity check on the model's own output.
 
 ### Step 1 — Prototype the prompt in AI Studio first
 
@@ -56,13 +56,13 @@ Go to https://aistudio.google.com/prompts/new_chat, upload any receipt photo (a 
 
 ### Step 2 — Export it and compare
 
-Click **Get code** (top right of the AI Studio interface) and select JavaScript. Compare what it generates to [mini-project/receipt-scanner.js](mini-project/receipt-scanner.js) — you'll see the same core shape: a model name, a `contents` array with your text and image, and a `responseSchema` in the generation config. This mini project takes that exact pattern and wraps it in a small reusable script with file-loading and a sanity check added on top.
+Click **Get code** (top right of the AI Studio interface) and select Python. Compare what it generates to [mini-project/receipt_scanner.py](mini-project/receipt_scanner.py) — you'll see the same core shape: a model name, a `contents` list with your text and image, and a `response_schema` in the generation config. This mini project takes that exact pattern and wraps it in a small reusable script with file-loading and a sanity check added on top.
 
 ### Step 3 — Set up your API key and run it for real
 
 ```powershell
 cd mini-project
-npm install
+pip install -r requirements.txt
 copy .env.example .env
 ```
 
@@ -71,7 +71,7 @@ Paste your key from https://aistudio.google.com/apikey into `.env`. Get a receip
 ### Step 4 — Scan a real receipt
 
 ```powershell
-node receipt-scanner.js receipt.jpg
+python receipt_scanner.py receipt.jpg
 ```
 
 You'll get back real structured JSON — merchant, date, total, currency, and a line-item array — extracted from an actual image, with the schema guaranteeing the shape matches what your code expects, no fragile text-parsing involved.
@@ -82,7 +82,7 @@ Try a receipt with a tip or a fee that isn't broken out as its own line item —
 
 ### Step 6 — Try a different model in AI Studio, then swap it in code
 
-Back in AI Studio, switch the model dropdown to a different Gemini variant and re-run your same prompt against the same image — compare accuracy and speed. Once you've picked one, change the `model:` string in `receipt-scanner.js` to match, and rerun Step 4 — the same "validate visually first" workflow, now applied to a model choice instead of just the prompt.
+Back in AI Studio, switch the model dropdown to a different Gemini variant and re-run your same prompt against the same image — compare accuracy and speed. Once you've picked one, change the `model=` string in `receipt_scanner.py` to match, and rerun Step 4 — the same "validate visually first" workflow, now applied to a model choice instead of just the prompt.
 
 ## Common pitfalls
 
