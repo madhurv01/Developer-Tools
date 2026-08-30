@@ -1,0 +1,9 @@
+{
+  "name": "ollama-log-triage",
+  "version": "1.0.0",
+  "description": "A private, fully offline log-triage assistant using a locally-running Ollama model",
+  "type": "module",
+  "scripts": {
+    "triage": "node log-triage.js"
+  }
+}

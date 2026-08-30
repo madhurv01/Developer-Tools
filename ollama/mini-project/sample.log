@@ -1,0 +1,13 @@
+2024-06-01T02:14:01Z INFO  Starting worker pool with 4 threads
+2024-06-01T02:14:02Z INFO  Connected to database at db-primary:5432
+2024-06-01T02:15:33Z WARN  Slow query detected (1.8s): SELECT * FROM orders WHERE ...
+2024-06-01T02:16:47Z ERROR Connection to db-primary:5432 refused
+2024-06-01T02:16:48Z ERROR Connection to db-primary:5432 refused
+2024-06-01T02:16:50Z ERROR Connection to db-primary:5432 refused
+2024-06-01T02:16:51Z INFO  Falling back to db-replica:5432
+2024-06-01T02:18:02Z ERROR Failed to send email via smtp.internal: timeout after 30s
+2024-06-01T02:18:03Z ERROR Failed to send email via smtp.internal: timeout after 30s
+2024-06-01T02:20:11Z INFO  Health check passed
+2024-06-01T02:22:45Z CRITICAL Out of memory: worker process killed (pid 8842)
+2024-06-01T02:22:46Z INFO  Restarting worker process
+2024-06-01T02:23:01Z INFO  Worker pool healthy
