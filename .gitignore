@@ -19,3 +19,4 @@ __pycache__/
 .venv/
 venv/
 .streamlit/secrets.toml
+git/mini-project/demo-repo/

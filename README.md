@@ -85,8 +85,10 @@ Each README follows the same fixed structure, so any tool in this repo can be sk
 | [railway](railway/README.md) | Core dev tool — deployment (app + database) | Deploying an app and its database together, wired automatically | A Ruby + Postgres app runnable locally against the real cloud database |
 | [huggingface](huggingface/README.md) | Open source — ML model hub | Downloading and running real open-source models, no API key | Offline support-ticket classification with real pretrained models |
 | [ollama](ollama/README.md) | Open source / AI tool — local LLM inference | Running open-weight LLMs entirely on your own machine | A private log-triage assistant with a custom Modelfile persona |
+| [git](git/README.md) | Core dev tool — version control | Tracking every change to a codebase, branching, and investigating history | Automatically finding a bug-introducing commit with `git bisect` |
+| [github](github/README.md) | Core dev tool — collaboration / CI | Pull requests, code review, and automated checks on every push | A broken PR caught by CI, fixed, and merged, entirely via the `gh` CLI |
 
-Twenty tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
+Twenty-two tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
 
 ## Where this is headed
 

@@ -1,0 +1,20 @@
+# Runs automatically on every push AND on every pull request - the real
+# mechanism behind "this PR shows a green check" or "this PR is blocked
+# because a check failed," which is what turns code review from "does this
+# look right" into "did this actually pass its tests."
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run tests
+        run: node --test
