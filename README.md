@@ -90,13 +90,29 @@ Each README follows the same fixed structure, so any tool in this repo can be sk
 
 Twenty-two tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
 
+## Tools by category
+
+The flat table above is the fastest way to see what's new; this grouping is the fastest way to browse by what you're actually trying to do:
+
+**Core dev tools** — [git](git/README.md) · [github](github/README.md) · [ngrok](ngrok/README.md) · [docker](docker/README.md) · [visual-studio-community](visual-studio-community/README.md) · [browser-devtools](browser-devtools/README.md) · [telegram](telegram/README.md) · [swagger](swagger/README.md) · [postman](postman/README.md) · [supabase-cli](supabase-cli/README.md) · [vercel](vercel/README.md) · [render](render/README.md) · [jotform](jotform/README.md) · [railway](railway/README.md)
+
+**AI tools** — [n8n](n8n/README.md) · [groq](groq/README.md) · [google-ai-studio](google-ai-studio/README.md) · [ollama](ollama/README.md)
+
+**Open-source tools worth mastering** — [supabase](supabase/README.md) · [streamlit](streamlit/README.md) · [sqlite](sqlite/README.md) · [huggingface](huggingface/README.md)
+
+(Several tools straddle more than one lane by nature — n8n is both an AI workflow tool and open source, Supabase is both a hosted product and open source you can self-host — the table's own Category column captures that nuance better than this simplified grouping does.)
+
+## Tech stacks used in the mini-projects
+
+The mini-projects deliberately don't default to one language — the point is real-world fit, not familiarity. Across the 22 tools here: **Python** (groq, google-ai-studio, huggingface, jotform, ngrok, n8n's alert receiver, supabase, telegram, sqlite, vercel, swagger's FastAPI), **Go** (docker's multi-stage build, postman's API-under-test), **Ruby** (railway), **C#/.NET** (visual-studio-community), **Node/JavaScript** (render, ollama, github's CI demo, browser-devtools by necessity), **Deno/TypeScript** (supabase-cli's Edge Function), and plain **SQL/Bash** (git's bisect demo, supabase-cli's migrations). A tool's mini-project is written in whatever stack is actually idiomatic for it in the real world — FastAPI for Swagger because it auto-generates its own OpenAPI contract, Go for the Docker demo because a multi-stage build is far more compelling with a compiled binary, Ruby for Railway because Rails/Sinatra + Postgres is one of its classic real use cases.
+
 ## Where this is headed
 
 There's no committed release schedule, but the categories below are the likely next directions this repo grows into — listed here so it's clear this table is a snapshot, not the ceiling:
 
-- **More AI tooling**: local model runners (e.g. Ollama), vector databases, agent/orchestration frameworks, prompt evaluation tooling.
-- **More core dev tooling**: version control workflows beyond the basics, terminal productivity tools, API testing/design tools, CI basics.
-- **More debugging & observability**: logging/tracing tools, performance profilers beyond the browser, database query debugging.
+- **More AI tooling**: vector databases (Qdrant, Chroma, Pinecone), agent/orchestration frameworks (LangChain, LlamaIndex), prompt evaluation tooling, LM Studio as a GUI-first contrast to Ollama.
+- **More core dev tooling**: end-to-end testing (Playwright, Cypress), load testing (k6), Infrastructure as Code at the cloud-provider level (Terraform), Kubernetes as the natural next step after Docker.
+- **More open-source tools worth mastering**: standalone Redis (pub/sub, rate limiting, caching patterns — currently only a supporting player inside the Docker demo), PostHog (self-hostable product analytics), a headless CMS (Strapi).
 
 If you have a specific tool in mind that fits the "genuinely useful, has a real reason to be reached for" bar described above, it's a good candidate for the next addition.
 
