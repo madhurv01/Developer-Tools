@@ -39,6 +39,15 @@ This repo is written for developers who already know how to code but want to clo
 
 It assumes basic command-line comfort but doesn't assume prior familiarity with any specific tool covered here — each README is written to be picked up cold.
 
+## Prerequisites
+
+Almost nothing here needs to be preinstalled globally — each README's own **Install** section covers exactly what that specific tool needs. That said, most mini-projects assume:
+
+- A terminal you're comfortable in (this repo's own command examples are written for PowerShell on Windows, with cross-platform equivalents noted where they differ).
+- [Git](git/README.md) and a free [GitHub](github/README.md) account, since a real number of mini-projects (Render, Railway, Streamlit Community Cloud, GitHub Actions itself) deploy or trigger directly off a pushed repository.
+- Whatever language runtime a specific tool's mini-project needs — Python, Node, Go, Ruby, or .NET, depending on the tool (see "Tech stacks used" below for exactly which). None of these are needed repo-wide; only for the specific folder you're working through.
+- A free-tier account with the relevant provider for any hosted tool (Supabase, Vercel, Render, Railway, Groq, Google AI Studio, Jotform) — every one of these is genuinely usable on its free tier for the scenario described, no paid plan required anywhere in this repo.
+
 ## How it's organized
 
 Every tool gets its own folder, named after the tool:
@@ -130,6 +139,12 @@ If you're coming back to this repo after a while, the table above is the fastest
 4. **Hit a pitfall?** Check the "Common pitfalls" section in that tool's README before assuming something is broken — most of the rough edges people hit have already been documented there.
 5. **Move on once you could explain the "why" to someone else.** Mastery here isn't about having run the commands once — it's being able to explain why the tool exists and when you'd reach for it again without needing to re-read the README.
 
+## Security & credentials
+
+Every mini-project that needs a credential (an API key, a bot token, a database password) reads it from an environment variable via a `.env` file, never hardcoded in source — and every folder that has one ships a `.env.example` alongside it, with a placeholder value, showing exactly what's needed without containing anything real. The root `.gitignore` excludes `.env`, `*.db`, generated logs, and language-specific build artifacts (`__pycache__/`, `bin/`, `node_modules/`, and similar) across every tool, so none of this is something you need to configure yourself before running a mini-project safely.
+
+A few tools' scenarios deliberately use dummy, fake, or placeholder-obvious credentials on purpose — a joke password (`hunter2`) in the Postman demo, a clearly-fake shared secret in the ngrok webhook demo — specifically so the mini-project runs immediately without you needing to invent a throwaway credential yourself, while making it obvious at a glance that nothing sensitive is involved.
+
 ## Contributing to this repo (if you're extending it yourself)
 
 When adding a new tool, follow the exact same folder shape and README structure described above — consistency is what makes this repo skimmable as it grows. A new entry should include a real, runnable `mini-project`, not just prose describing what one would look like. If a tool doesn't have a genuine real-world scenario behind it yet, it's not ready to be added.
@@ -147,6 +162,12 @@ No — each folder is self-contained and can be read independently. Jump straigh
 
 **What if a tool changes and a README goes stale?**
 Install steps and UI details drift over time (a flag gets renamed, a dashboard gets redesigned) faster than "why this tool exists" does. If something in an Install/Configure section stops matching reality, that section gets refreshed — the surrounding "why" sections tend to stay accurate much longer, which is by design.
+
+**Do I need real API keys/accounts for everything, or can I just read?**
+Reading any README top to bottom gives you the real reasoning even without running anything — but the actual point of this repo is running the mini-project, which for hosted tools does mean a free account and, for a handful, a free API key. Every one of those is genuinely free-tier-usable for exactly the scenario described; none require a paid plan.
+
+**Is it safe to just run these mini-projects as-is?**
+Yes — see "Security & credentials" above. Nothing in this repo needs a credential hardcoded to run, every `.env`-consuming project ships a `.env.example` showing exactly what to fill in yourself, and nothing here makes an irreversible or destructive change without you explicitly choosing to (e.g. deploying to a real cloud project is always a deliberate step you take, never something a script does on its own).
 
 ---
 
