@@ -1,0 +1,13 @@
+{
+  "repository": { "full_name": "acme-corp/checkout-service" },
+  "workflow_run": {
+    "name": "CI",
+    "head_branch": "main",
+    "conclusion": "failure",
+    "html_url": "https://github.com/acme-corp/checkout-service/actions/runs/1234567890",
+    "head_commit": {
+      "message": "Refactor payment retry logic",
+      "author": { "name": "jordan-lee" }
+    }
+  }
+}

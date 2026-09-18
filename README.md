@@ -46,7 +46,7 @@ Almost nothing here needs to be preinstalled globally — each README's own **In
 - A terminal you're comfortable in (this repo's own command examples are written for PowerShell on Windows, with cross-platform equivalents noted where they differ).
 - [Git](git/README.md) and a free [GitHub](github/README.md) account, since a real number of mini-projects (Render, Railway, Streamlit Community Cloud, GitHub Actions itself) deploy or trigger directly off a pushed repository.
 - Whatever language runtime a specific tool's mini-project needs — Python, Node, Go, Ruby, or .NET, depending on the tool (see "Tech stacks used" below for exactly which). None of these are needed repo-wide; only for the specific folder you're working through.
-- A free-tier account with the relevant provider for any hosted tool (Supabase, Vercel, Render, Railway, Groq, Google AI Studio, Jotform) — every one of these is genuinely usable on its free tier for the scenario described, no paid plan required anywhere in this repo.
+- A free-tier account with the relevant provider for any hosted tool (Supabase, Vercel, Render, Railway, Groq, Google AI Studio, Jotform, Jira Cloud) — every one of these is genuinely usable on its free tier for the scenario described, no paid plan required anywhere in this repo.
 
 ## How it's organized
 
@@ -96,14 +96,15 @@ Each README follows the same fixed structure, so any tool in this repo can be sk
 | [ollama](ollama/README.md) | Open source / AI tool — local LLM inference | Running open-weight LLMs entirely on your own machine | A private log-triage assistant with a custom Modelfile persona |
 | [git](git/README.md) | Core dev tool — version control | Tracking every change to a codebase, branching, and investigating history | Automatically finding a bug-introducing commit with `git bisect` |
 | [github](github/README.md) | Core dev tool — collaboration / CI | Pull requests, code review, and automated checks on every push | A broken PR caught by CI, fixed, and merged, entirely via the `gh` CLI |
+| [jira](jira/README.md) | Core dev tool — issue tracking / automation | Automating ticket creation via the REST API (or MCP for AI agents) | Auto-filing a prioritized Jira ticket from a failed CI run, no duplicates |
 
-Twenty-two tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
+Twenty-three tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
 
 ## Tools by category
 
 The flat table above is the fastest way to see what's new; this grouping is the fastest way to browse by what you're actually trying to do:
 
-**Core dev tools** — [git](git/README.md) · [github](github/README.md) · [ngrok](ngrok/README.md) · [docker](docker/README.md) · [visual-studio-community](visual-studio-community/README.md) · [browser-devtools](browser-devtools/README.md) · [telegram](telegram/README.md) · [swagger](swagger/README.md) · [postman](postman/README.md) · [supabase-cli](supabase-cli/README.md) · [vercel](vercel/README.md) · [render](render/README.md) · [jotform](jotform/README.md) · [railway](railway/README.md)
+**Core dev tools** — [git](git/README.md) · [github](github/README.md) · [jira](jira/README.md) · [ngrok](ngrok/README.md) · [docker](docker/README.md) · [visual-studio-community](visual-studio-community/README.md) · [browser-devtools](browser-devtools/README.md) · [telegram](telegram/README.md) · [swagger](swagger/README.md) · [postman](postman/README.md) · [supabase-cli](supabase-cli/README.md) · [vercel](vercel/README.md) · [render](render/README.md) · [jotform](jotform/README.md) · [railway](railway/README.md)
 
 **AI tools** — [n8n](n8n/README.md) · [groq](groq/README.md) · [google-ai-studio](google-ai-studio/README.md) · [ollama](ollama/README.md)
 
@@ -113,7 +114,7 @@ The flat table above is the fastest way to see what's new; this grouping is the 
 
 ## Tech stacks used in the mini-projects
 
-The mini-projects deliberately don't default to one language — the point is real-world fit, not familiarity. Across the 22 tools here: **Python** (groq, google-ai-studio, huggingface, jotform, ngrok, n8n's alert receiver, supabase, telegram, sqlite, vercel, swagger's FastAPI), **Go** (docker's multi-stage build, postman's API-under-test), **Ruby** (railway), **C#/.NET** (visual-studio-community), **Node/JavaScript** (render, ollama, github's CI demo, browser-devtools by necessity), **Deno/TypeScript** (supabase-cli's Edge Function), and plain **SQL/Bash** (git's bisect demo, supabase-cli's migrations). A tool's mini-project is written in whatever stack is actually idiomatic for it in the real world — FastAPI for Swagger because it auto-generates its own OpenAPI contract, Go for the Docker demo because a multi-stage build is far more compelling with a compiled binary, Ruby for Railway because Rails/Sinatra + Postgres is one of its classic real use cases.
+The mini-projects deliberately don't default to one language — the point is real-world fit, not familiarity. Across the 23 tools here: **Python** (groq, google-ai-studio, huggingface, jotform, jira, ngrok, n8n's alert receiver, supabase, telegram, sqlite, vercel, swagger's FastAPI), **Go** (docker's multi-stage build, postman's API-under-test), **Ruby** (railway), **C#/.NET** (visual-studio-community), **Node/JavaScript** (render, ollama, github's CI demo, browser-devtools by necessity), **Deno/TypeScript** (supabase-cli's Edge Function), and plain **SQL/Bash** (git's bisect demo, supabase-cli's migrations). A tool's mini-project is written in whatever stack is actually idiomatic for it in the real world — FastAPI for Swagger because it auto-generates its own OpenAPI contract, Go for the Docker demo because a multi-stage build is far more compelling with a compiled binary, Ruby for Railway because Rails/Sinatra + Postgres is one of its classic real use cases.
 
 ## Where this is headed
 
