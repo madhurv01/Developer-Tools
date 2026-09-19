@@ -97,8 +97,9 @@ Each README follows the same fixed structure, so any tool in this repo can be sk
 | [git](git/README.md) | Core dev tool — version control | Tracking every change to a codebase, branching, and investigating history | Automatically finding a bug-introducing commit with `git bisect` |
 | [github](github/README.md) | Core dev tool — collaboration / CI | Pull requests, code review, and automated checks on every push | A broken PR caught by CI, fixed, and merged, entirely via the `gh` CLI |
 | [jira](jira/README.md) | Core dev tool — issue tracking / automation | Automating ticket creation via the REST API (or MCP for AI agents) | Auto-filing a prioritized Jira ticket from a failed CI run, no duplicates |
+| [jupyter-notebook](jupyter-notebook/README.md) | Open source — interactive computing | Cell-by-cell exploratory analysis with persistent, inspectable state | An EDA that deliberately triggers, then fixes, a hidden-state execution bug |
 
-Twenty-three tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
+Twenty-four tools in, three categories represented — the table above will keep growing as new folders get added; treat it as the changelog for this repo.
 
 ## Tools by category
 
@@ -108,13 +109,13 @@ The flat table above is the fastest way to see what's new; this grouping is the 
 
 **AI tools** — [n8n](n8n/README.md) · [groq](groq/README.md) · [google-ai-studio](google-ai-studio/README.md) · [ollama](ollama/README.md)
 
-**Open-source tools worth mastering** — [supabase](supabase/README.md) · [streamlit](streamlit/README.md) · [sqlite](sqlite/README.md) · [huggingface](huggingface/README.md)
+**Open-source tools worth mastering** — [supabase](supabase/README.md) · [streamlit](streamlit/README.md) · [sqlite](sqlite/README.md) · [huggingface](huggingface/README.md) · [jupyter-notebook](jupyter-notebook/README.md)
 
 (Several tools straddle more than one lane by nature — n8n is both an AI workflow tool and open source, Supabase is both a hosted product and open source you can self-host — the table's own Category column captures that nuance better than this simplified grouping does.)
 
 ## Tech stacks used in the mini-projects
 
-The mini-projects deliberately don't default to one language — the point is real-world fit, not familiarity. Across the 23 tools here: **Python** (groq, google-ai-studio, huggingface, jotform, jira, ngrok, n8n's alert receiver, supabase, telegram, sqlite, vercel, swagger's FastAPI), **Go** (docker's multi-stage build, postman's API-under-test), **Ruby** (railway), **C#/.NET** (visual-studio-community), **Node/JavaScript** (render, ollama, github's CI demo, browser-devtools by necessity), **Deno/TypeScript** (supabase-cli's Edge Function), and plain **SQL/Bash** (git's bisect demo, supabase-cli's migrations). A tool's mini-project is written in whatever stack is actually idiomatic for it in the real world — FastAPI for Swagger because it auto-generates its own OpenAPI contract, Go for the Docker demo because a multi-stage build is far more compelling with a compiled binary, Ruby for Railway because Rails/Sinatra + Postgres is one of its classic real use cases.
+The mini-projects deliberately don't default to one language — the point is real-world fit, not familiarity. Across the 24 tools here: **Python** (groq, google-ai-studio, huggingface, jotform, jira, jupyter-notebook, ngrok, n8n's alert receiver, supabase, telegram, sqlite, vercel, swagger's FastAPI), **Go** (docker's multi-stage build, postman's API-under-test), **Ruby** (railway), **C#/.NET** (visual-studio-community), **Node/JavaScript** (render, ollama, github's CI demo, browser-devtools by necessity), **Deno/TypeScript** (supabase-cli's Edge Function), and plain **SQL/Bash** (git's bisect demo, supabase-cli's migrations). A tool's mini-project is written in whatever stack is actually idiomatic for it in the real world — FastAPI for Swagger because it auto-generates its own OpenAPI contract, Go for the Docker demo because a multi-stage build is far more compelling with a compiled binary, Ruby for Railway because Rails/Sinatra + Postgres is one of its classic real use cases.
 
 ## Where this is headed
 
